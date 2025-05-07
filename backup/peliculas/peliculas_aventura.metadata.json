@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"}],"uuid":"17c2bcba604a4a73bf9421c565c0fca4","collectionName":"peliculas_aventura","type":"collection"}
