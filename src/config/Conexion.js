@@ -7,7 +7,7 @@ const Conexion=async()=>{
         await mongoose.connect(process.env.MONGO_URI,{
             useNewUrlParser:true,
             useUnifiedTopology:true,
-            maxPoolSize:10, //determina el numero maximo de conexiones
+            maxPoolSize:10, 
             minPoolSize:5
         })
         console.log('Conectado a MongoDB con Pooling')

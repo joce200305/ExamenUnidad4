@@ -1,5 +1,10 @@
 import { PeliculaAventura, PeliculaInfantil, PeliculaPopular } from "../models/Pelicula.js";
 
+const construirUrlImagen = (req, filename) => {
+    if (!filename) return "";
+    return `${req.protocol}://${req.get('host')}/uploads/${filename}`;
+};
+
 const obtenerPeliculas = async (req, res, tipoEspecifico) => {
     try {
         let peliculas;
@@ -62,7 +67,7 @@ const obtenerPeliculas = async (req, res, tipoEspecifico) => {
             detalle: error.message
         });
     }
-}
+};
 
 const obtenerPeliculaPorTitulo = async (req, res, tipoEspecifico) => {
     try {
@@ -106,10 +111,10 @@ const obtenerPeliculaPorTitulo = async (req, res, tipoEspecifico) => {
             detalle: error.message
         });
     }
-}
+};
 
 const crearPelicula = async (req, res, tipoEspecifico) => {
-    if(req.user.rol!==1) return res.status(500).json({"msj":"no tienes permisos para efectuar esta accion"});
+    if(req.user.rol !== 1) return res.status(403).json({"msj":"No tienes permisos para efectuar esta acción"});
 
     try {
         const { titulo, director, estreno, genero, duracion, calificacion } = req.body;
@@ -149,21 +154,23 @@ const crearPelicula = async (req, res, tipoEspecifico) => {
             });
         }
         
+        const imagen = req.file ? req.file.filename : req.body.imagen || "";
+        
         let nuevaPelicula;
         switch(tipo) {
             case 'aventura':
                 nuevaPelicula = new PeliculaAventura({
-                    titulo, director, estreno, genero, duracion, calificacion
+                    titulo, director, estreno, genero, duracion, calificacion, imagen
                 });
                 break;
             case 'infantil':
                 nuevaPelicula = new PeliculaInfantil({
-                    titulo, director, estreno, genero, duracion, calificacion
+                    titulo, director, estreno, genero, duracion, calificacion, imagen
                 });
                 break;
             case 'popular':
                 nuevaPelicula = new PeliculaPopular({
-                    titulo, director, estreno, genero, duracion, calificacion
+                    titulo, director, estreno, genero, duracion, calificacion, imagen
                 });
                 break;
             default:
@@ -178,7 +185,10 @@ const crearPelicula = async (req, res, tipoEspecifico) => {
         res.status(201).json({
             success: true,
             mensaje: "Película creada exitosamente",
-            pelicula: nuevaPelicula
+            pelicula: {
+                ...nuevaPelicula._doc,
+                imagen: construirUrlImagen(req, nuevaPelicula.imagen)
+            }
         });
     } catch (error) {
         res.status(500).json({
@@ -186,10 +196,10 @@ const crearPelicula = async (req, res, tipoEspecifico) => {
             detalle: error.message
         });
     }
-}
+};
 
 const actualizarPelicula = async (req, res, tipoEspecifico) => {
-    if(req.user.rol!==1) return res.status(500).json({"msj":"no tienes permisos para efectuar esta accion"});
+    if(req.user.rol !== 1) return res.status(403).json({"msj":"No tienes permisos para efectuar esta acción"});
 
     try {
         const { titulo: nuevoTitulo, director, estreno, genero, duracion, calificacion } = req.body;
@@ -252,6 +262,8 @@ const actualizarPelicula = async (req, res, tipoEspecifico) => {
             }
         }
         
+        const imagen = req.file ? req.file.filename : req.body.imagen || peliculaExistente.imagen;
+        
         let modelo;
         switch(tipo) {
             case 'aventura': modelo = PeliculaAventura; break;
@@ -267,7 +279,8 @@ const actualizarPelicula = async (req, res, tipoEspecifico) => {
                 estreno,
                 genero,
                 duracion,
-                calificacion
+                calificacion,
+                imagen
             },
             { new: true }
         );
@@ -275,7 +288,10 @@ const actualizarPelicula = async (req, res, tipoEspecifico) => {
         res.status(200).json({
             success: true,
             mensaje: "Película actualizada exitosamente",
-            pelicula: peliculaActualizada
+            pelicula: {
+                ...peliculaActualizada._doc,
+                imagen: construirUrlImagen(req, peliculaActualizada.imagen)
+            }
         });
     } catch (error) {
         res.status(500).json({
@@ -283,7 +299,7 @@ const actualizarPelicula = async (req, res, tipoEspecifico) => {
             detalle: error.message
         });
     }
-}
+};
 
 const eliminarPelicula = async (req, res, tipoEspecifico) => {
     if(req.user.rol !==1) return res.status(500).json({"msj":"no tienes permisos para efectuar esta accion"});
@@ -337,7 +353,7 @@ const eliminarPelicula = async (req, res, tipoEspecifico) => {
             detalle: error.message
         });
     }
-}
+};
 
 export { 
     obtenerPeliculas, 

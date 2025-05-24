@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+
 const UsuarioModelo = new mongoose.Schema({
     nombre: {
         type: String,
@@ -12,6 +13,7 @@ const UsuarioModelo = new mongoose.Schema({
         unique: true,
         trim: true
     },
+
     password: {
         type: String,
         required: true,
@@ -20,15 +22,17 @@ const UsuarioModelo = new mongoose.Schema({
     rol: {
         type: Number,
         required: true,
-        default: 2 // Por defecto rol de usuario normal (2)
+        enum: [1, 2], 
+        default: 2
     },
     estado: {
         type: String,
-        enum: ['activo', 'inactivo'],
-        default: 'activo'
+        enum: ["activo", "inactivo", "deshabilitado"],
+        default: "inactivo"
     }
 }, {
+    
 });
 
-// Identificador fuera del archivo, instancia de clase apartir de schema
+
 export default mongoose.model('Usuarios', UsuarioModelo);

@@ -6,7 +6,8 @@ const peliculaSchema = new mongoose.Schema({
     estreno: { type: Number, required: true },
     genero: { type: String, required: true },
     duracion: { type: Number, required: true },
-    calificacion: { type: Number, required: true }
+    calificacion: { type: Number, required: true },
+    imagen: { type: String, default: "" }
 });
 
 const PeliculaAventura = mongoose.model(

@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 
 const authMiddleware = (req, res, next) => {
-    const token = req.header("Autorizacion");
+    const token = req.header("autorizacion");
     try{
         if (!token) return res.status(500).json({"msj":"se ha generado un error, no se ha proporcionado un token!"});
         const decodificado = jwt.verify(token.replace("Back ",""),process.env.JWT_SECRET);
